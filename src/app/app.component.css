@@ -26,6 +26,7 @@
 }
 
 .rounds-counter {
+  font-weight: bold;
   cursor: pointer;
 }
 

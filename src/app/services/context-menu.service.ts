@@ -31,11 +31,14 @@ export class ContextMenuService {
       onClick(context) {
         const addToInitiative = context.items.every((item) => item.metadata[`${ID}/metadata`] === undefined);
         if (addToInitiative) {
+          const initiativeRequest = window.prompt('Enter initiative:');
+          const initiative = initiativeRequest && parseInt(initiativeRequest) ? parseInt(initiativeRequest) : 0;
+
           OBR.scene.items.updateItems(context.items, (items) => {
             for (let item of items) {
               item.metadata[`${ID}/metadata`] = {
                 id: item.id,
-                initiative: 0,
+                initiative,
                 rounds: 1,
               };
             }
