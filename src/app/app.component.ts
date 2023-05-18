@@ -84,7 +84,9 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   onRoundCounterClick(): void {
-    const resetRequested = window.confirm('Reset rounds to 1?');
-    if (resetRequested) this.initiativeListService.resetRounds();
+    const roundRequest = window.prompt('Enter current round:');
+    if (roundRequest && parseInt(roundRequest)) {
+      this.initiativeListService.setRounds(parseInt(roundRequest) > 0 ? parseInt(roundRequest) : 0);
+    }
   }
 }

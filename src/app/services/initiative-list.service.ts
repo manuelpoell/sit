@@ -88,7 +88,7 @@ export class InitiativeListService {
       });
   }
 
-  resetRounds(): void {
+  setRounds(rounds: number = 1): void {
     OBR.scene.items.updateItems(
       (item) => item.metadata[`${ID}/metadata`] != null,
       (items) => {
@@ -96,7 +96,7 @@ export class InitiativeListService {
           const metadata: any = item.metadata[`${ID}/metadata`];
           item.metadata[`${ID}/metadata`] = {
             ...metadata,
-            rounds: 1,
+            rounds,
           };
         }
       }
