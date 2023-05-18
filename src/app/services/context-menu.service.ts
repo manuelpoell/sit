@@ -34,6 +34,7 @@ export class ContextMenuService {
           OBR.scene.items.updateItems(context.items, (items) => {
             for (let item of items) {
               item.metadata[`${ID}/metadata`] = {
+                id: item.id,
                 initiative: 0,
                 rounds: 1,
               };

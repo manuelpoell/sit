@@ -60,10 +60,13 @@ export class InitiativeListService {
       .getItems((item) => item.metadata[`${ID}/metadata`] != null)
       .then((items) => {
         if (items.length === 0) return;
+        const itemMeta = items
+          .map((item) => item.metadata[`${ID}/metadata`] as any)
+          .sort((a, b) => b.initiative - a.initiative);
 
-        const activeIndex = items.findIndex((item) => (item.metadata[`${ID}/metadata`] as any).active);
-        const nextRound: boolean = activeIndex === items.length - 1;
-        const nextActiveIndex = nextRound ? 0 : activeIndex + 1;
+        const activeIndex = itemMeta.findIndex((item) => item.active);
+        const nextRound: boolean = activeIndex === itemMeta.length - 1;
+        const nextActiveID = nextRound || activeIndex < 0 ? itemMeta[0].id : itemMeta[activeIndex + 1].id;
 
         if (nextRound) {
           this.currentRoundSubject.next((items[0].metadata[`${ID}/metadata`] as any).rounds + 1);
@@ -76,7 +79,7 @@ export class InitiativeListService {
               const metadata: any = item.metadata[`${ID}/metadata`];
               item.metadata[`${ID}/metadata`] = {
                 ...metadata,
-                active: items.indexOf(item) === nextActiveIndex,
+                active: metadata.id === nextActiveID,
                 rounds: nextRound ? metadata.rounds + 1 : metadata.rounds,
               };
             }
