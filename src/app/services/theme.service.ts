@@ -7,5 +7,6 @@ export class ThemeService {
 
   setTheme(theme: Theme): void {
     document.body.style.color = theme.text.primary;
+    document.getElementById('app-placeholder-text')!.style.color = theme.text.secondary;
   }
 }

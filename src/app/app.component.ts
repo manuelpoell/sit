@@ -1,10 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  ChangeDetectorRef,
-  Component,
-  OnDestroy,
-  OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import OBR from '@owlbear-rodeo/sdk';
 import { ThemeService } from './services/theme.service';
@@ -19,15 +13,30 @@ import { Subscription } from 'rxjs';
   standalone: true,
   imports: [CommonModule, InitiativeListItemComponent],
   template: `
-    <ng-container *ngFor="let item of initiativeItems">
-      <app-initiative-list-item [item]="item"></app-initiative-list-item>
-    </ng-container>
+    <div class="app-container">
+      <div class="app-placeholder" [style.display]="initiativeItems.length > 0 ? 'none' : 'flex'">
+        <span id="app-placeholder-text">Schmandi's<br />Initiative Tracker</span>
+      </div>
+      <ng-container *ngIf="initiativeItems.length > 0">
+        <div class="app-header">
+          <span class="rounds-counter" (click)="onRoundCounterClick()">Round {{ roundCounter }}</span>
+          <span class="next-button" (click)="onNextButtonClick()">&#x25B6;</span>
+        </div>
+        <ng-container *ngFor="let item of initiativeItems">
+          <app-initiative-list-item
+            [item]="item"
+            (initiativeChange)="onInitiativeChange(item.id, $event)"
+          ></app-initiative-list-item>
+        </ng-container>
+      </ng-container>
+    </div>
   `,
-  styles: [],
+  styleUrls: ['./app.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AppComponent implements OnInit, OnDestroy {
   initiativeItems: Array<InitiativeItem> = [];
+  roundCounter: number = 1;
   private subscription = new Subscription();
 
   constructor(
@@ -49,8 +58,14 @@ export class AppComponent implements OnInit, OnDestroy {
     });
 
     // subscribe manually because async pipe does not work somehow
-    const s = this.initiativeListService.initiativeItems$.subscribe((v) => {
-      this.initiativeItems = [...v];
+    let s = this.initiativeListService.initiativeItems$.subscribe((items) => {
+      this.initiativeItems = [...items];
+      this.cdRef.detectChanges();
+    });
+    this.subscription.add(s);
+
+    s = this.initiativeListService.currentRound$.subscribe((round) => {
+      this.roundCounter = round;
       this.cdRef.detectChanges();
     });
     this.subscription.add(s);
@@ -58,5 +73,18 @@ export class AppComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.subscription.unsubscribe();
+  }
+
+  onInitiativeChange(id: string, initiative: number): void {
+    this.initiativeListService.updateInitiative(id, initiative);
+  }
+
+  onNextButtonClick(): void {
+    this.initiativeListService.iterateNext();
+  }
+
+  onRoundCounterClick(): void {
+    const resetRequested = window.confirm('Reset rounds to 1?');
+    if (resetRequested) this.initiativeListService.resetRounds();
   }
 }
