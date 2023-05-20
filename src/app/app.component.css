@@ -30,6 +30,21 @@
   cursor: pointer;
 }
 
+.action-buttons {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.effects-button {
+  font-size: 24px;
+  margin-top: -4px;
+}
+
+.effects-button:hover {
+  cursor: pointer;
+}
+
 .next-button:hover {
   cursor: pointer;
 }

@@ -3,6 +3,8 @@ import OBR from '@owlbear-rodeo/sdk';
 import { ID } from '../utils/config';
 import { InitiativeItem } from '../models/intitiative-list-item';
 import { BehaviorSubject } from 'rxjs';
+import { EffectListService } from './effect-list.service';
+import { EffectListItem } from '../models/effect-list-item';
 
 @Injectable()
 export class InitiativeListService {
@@ -12,7 +14,7 @@ export class InitiativeListService {
   private currentRoundSubject = new BehaviorSubject<number>(1);
   currentRound$ = this.currentRoundSubject.asObservable();
 
-  constructor() {}
+  constructor(private effectListService: EffectListService) {}
 
   setup(): void {
     const renderList = (items: Array<any>) => {
@@ -26,6 +28,7 @@ export class InitiativeListService {
             name: item.name,
             active: metadata.active,
             rounds: metadata.rounds || 1,
+            effects: metadata.effects,
           });
         }
       }
@@ -33,6 +36,12 @@ export class InitiativeListService {
       const sortedItems = initiativeItems.sort((a, b) => b.initiative - a.initiative);
       this.initiativeItemsSubject.next([...sortedItems]);
       this.currentRoundSubject.next(sortedItems[0]?.rounds || 1);
+
+      let currentEffects: Array<EffectListItem> = [];
+      for (const item of sortedItems.filter((i) => i.effects?.length > 0)) {
+        currentEffects = currentEffects.concat(item.effects);
+      }
+      this.effectListService.setEffectList(currentEffects);
 
       const newHeight = (sortedItems.length + 1) * 50 + 25;
       const minHeight = 225;
@@ -77,10 +86,20 @@ export class InitiativeListService {
           (items) => {
             for (const item of items) {
               const metadata: any = item.metadata[`${ID}/metadata`];
+
+              let effects: Array<EffectListItem> = metadata.effects || [];
+              effects = effects
+                .map((effect) => {
+                  effect.rounds = nextRound ? effect.rounds - 1 : effect.rounds;
+                  return effect;
+                })
+                .filter((effect) => effect.rounds > 0);
+
               item.metadata[`${ID}/metadata`] = {
                 ...metadata,
                 active: metadata.id === nextActiveID,
                 rounds: nextRound ? metadata.rounds + 1 : metadata.rounds,
+                effects,
               };
             }
           }

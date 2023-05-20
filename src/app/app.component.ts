@@ -7,20 +7,26 @@ import { InitiativeListService } from './services/initiative-list.service';
 import { InitiativeItem } from './models/intitiative-list-item';
 import { InitiativeListItemComponent } from './components/initiative-list-item.component';
 import { Subscription } from 'rxjs';
+import { EffectListComponent } from './components/effect-list.component';
+import { slideInOutTrigger } from './animations/roll-up-down.animation';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, InitiativeListItemComponent],
+  imports: [CommonModule, InitiativeListItemComponent, EffectListComponent],
   template: `
     <div class="app-container">
+      <app-effect-list *ngIf="showEffectList" @slideInOut (onClose)="onEffectsButtonClick()"></app-effect-list>
       <div class="app-placeholder" [style.display]="initiativeItems.length > 0 ? 'none' : 'flex'">
         <span id="app-placeholder-text">Schmandi's<br />Initiative Tracker</span>
       </div>
       <ng-container *ngIf="initiativeItems.length > 0">
         <div class="app-header">
           <span class="rounds-counter" (click)="onRoundCounterClick()">Round {{ roundCounter }}</span>
-          <span class="next-button" (click)="onNextButtonClick()">&#x25B6;</span>
+          <div class="action-buttons">
+            <span class="effects-button" (click)="onEffectsButtonClick()">&#x2630;</span>
+            <span class="next-button" (click)="onNextButtonClick()">&#x25B6;</span>
+          </div>
         </div>
         <ng-container *ngFor="let item of initiativeItems">
           <app-initiative-list-item
@@ -33,10 +39,12 @@ import { Subscription } from 'rxjs';
   `,
   styleUrls: ['./app.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  animations: [slideInOutTrigger],
 })
 export class AppComponent implements OnInit, OnDestroy {
   initiativeItems: Array<InitiativeItem> = [];
   roundCounter: number = 1;
+  showEffectList: boolean = false;
   private subscription = new Subscription();
 
   constructor(
@@ -88,5 +96,10 @@ export class AppComponent implements OnInit, OnDestroy {
     if (roundRequest && parseInt(roundRequest)) {
       this.initiativeListService.setRounds(parseInt(roundRequest) > 0 ? parseInt(roundRequest) : 0);
     }
+  }
+
+  onEffectsButtonClick(): void {
+    this.showEffectList = !this.showEffectList;
+    this.cdRef.detectChanges();
   }
 }

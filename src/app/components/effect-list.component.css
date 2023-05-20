@@ -1,0 +1,38 @@
+:host {
+  position: absolute;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #222639dd;
+  backdrop-filter: blur(1px);
+  overflow: auto;
+}
+
+.effect-list-header {
+  width: 100%;
+  height: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.close-button {
+  font-size: 24px;
+}
+
+.close-button:hover {
+  cursor: pointer;
+}
+
+.effects-placeholder {
+  height: 125px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.effects-placeholder > span {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 24px;
+  text-align: center;
+}
