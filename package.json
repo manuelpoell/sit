@@ -1,11 +1,12 @@
 {
   "name": "sit",
-  "version": "0.0.0",
+  "description": "owlbear.app extension | Initiative and Effects Tracker",
+  "author": "Manuel Pöll",
+  "version": "1.1.0",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "build": "ng build",
-    "watch": "ng build --watch --configuration development"
+    "build": "ng build"
   },
   "private": true,
   "dependencies": {
