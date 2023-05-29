@@ -19,7 +19,7 @@ import { EffectListItemComponent } from './effect-list-item.component';
   imports: [CommonModule, EffectListItemComponent],
   template: `
     <div class="effect-list-header">
-      <span class="close-button" (click)="onClose.emit()">&#x26CC;</span>
+      <span class="icon-button close-button" (click)="onClose.emit()">&#x26CC;</span>
     </div>
     <div class="effects-placeholder" *ngIf="effectList.length < 1">
       <span>No effects active</span>

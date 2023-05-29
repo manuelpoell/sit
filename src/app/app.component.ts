@@ -24,8 +24,8 @@ import { slideInOutTrigger } from './animations/roll-up-down.animation';
         <div class="app-header">
           <span class="rounds-counter" (click)="onRoundCounterClick()">Round {{ roundCounter }}</span>
           <div class="action-buttons">
-            <span class="effects-button" (click)="onEffectsButtonClick()">&#x2630;</span>
-            <span class="next-button" (click)="onNextButtonClick()">&#x25B6;</span>
+            <span class="icon-button effects-button" (click)="onEffectsButtonClick()">&#x2630;</span>
+            <span class="icon-button next-button" (click)="onNextButtonClick()">&#x25B6;</span>
           </div>
         </div>
         <ng-container *ngFor="let item of initiativeItems">
