@@ -33,8 +33,8 @@ export class ContextMenuService {
       onClick(context) {
         const addToInitiative = context.items.every((item) => item.metadata[`${ID}/metadata`] === undefined);
         if (addToInitiative) {
-          const initiativeRequest = window.prompt('Enter initiative:');
-          const initiative = initiativeRequest && parseInt(initiativeRequest) ? parseInt(initiativeRequest) : 0;
+          const initiativeInput = window.prompt('Enter initiative:');
+          const initiative = initiativeInput && parseInt(initiativeInput) ? parseInt(initiativeInput) : 0;
 
           OBR.scene.items.updateItems(context.items, (items) => {
             for (let item of items) {
@@ -72,9 +72,10 @@ export class ContextMenuService {
         },
       ],
       onClick(context) {
-        const description = window.prompt('Enter description for this effect:');
-        const roundsRequest = window.prompt('Enter duration in rounds:');
-        const rounds = roundsRequest && parseInt(roundsRequest) ? parseInt(roundsRequest) : 1;
+        const descriptionInput = window.prompt('Enter description for this effect:');
+        const description = descriptionInput?.length ? descriptionInput : 'Effect';
+        const roundsInput = window.prompt('Enter duration in rounds:');
+        const rounds = roundsInput && parseInt(roundsInput) ? parseInt(roundsInput) : 1;
 
         OBR.scene.items.updateItems(context.items, (items) => {
           for (let item of items) {

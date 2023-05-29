@@ -15,7 +15,7 @@ export class EffectListService {
     this.effectList$.pipe(first()).subscribe((currentList) => {
       currentList.forEach((effect) => {
         if (!list.find((newEffect) => newEffect.id === effect.id)) {
-          OBR.notification.show(`"${effect.description}" is fading...`);
+          OBR.notification.show(`${effect.description} is fading...`);
         }
       });
     });
