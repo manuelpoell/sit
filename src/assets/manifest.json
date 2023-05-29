@@ -1,9 +1,10 @@
 {
   "name": "SIT",
   "description": "Schmandi's Initiative and Effects Tracker with rounds counter.",
-  "author": "Manuel Pöll",
+  "author": "Schmandi",
   "version": "1.1.0",
   "manifest_version": 1,
+  "icon": "/assets/app-logo.png",
   "action": {
     "title": "SIT",
     "icon": "/assets/app-icon.svg",
