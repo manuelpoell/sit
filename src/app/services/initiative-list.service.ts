@@ -105,6 +105,8 @@ export class InitiativeListService {
           }
         );
       });
+
+    this.centerActiveItem();
   }
 
   setRounds(rounds: number = 1): void {
@@ -121,5 +123,24 @@ export class InitiativeListService {
       }
     );
     this.currentRoundSubject.next(1);
+  }
+
+  private async centerActiveItem(): Promise<void> {
+    const items = await OBR.scene.items.getItems((item) => item.metadata[`${ID}/metadata`] != null).catch(() => []);
+    const activeItem = items.find((item) => (item.metadata[`${ID}/metadata`] as any).active);
+
+    const scale = await OBR.viewport.getScale();
+    const width = (await OBR.viewport.getWidth()) / scale;
+    const height = (await OBR.viewport.getHeight()) / scale;
+
+    if (activeItem?.position) {
+      OBR.viewport.animateToBounds({
+        center: activeItem.position,
+        height,
+        width,
+        max: { x: activeItem.position.x + width / 2, y: activeItem.position.y + height / 2 },
+        min: { x: activeItem.position.x - width / 2, y: activeItem.position.y - height / 2 },
+      });
+    }
   }
 }
