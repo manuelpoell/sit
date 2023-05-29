@@ -133,7 +133,7 @@ export class InitiativeListService {
     const width = (await OBR.viewport.getWidth()) / scale;
     const height = (await OBR.viewport.getHeight()) / scale;
 
-    if (activeItem?.position) {
+    if (activeItem?.position && activeItem?.visible) {
       OBR.viewport.animateToBounds({
         center: activeItem.position,
         height,
