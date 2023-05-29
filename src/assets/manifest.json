@@ -2,7 +2,7 @@
   "name": "SIT",
   "description": "Schmandi's Initiative and Effects Tracker with rounds counter.",
   "author": "Schmandi",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "manifest_version": 1,
   "icon": "/assets/app-logo.png",
   "action": {
