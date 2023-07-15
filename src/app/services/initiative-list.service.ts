@@ -5,6 +5,7 @@ import { InitiativeItem } from '../models/intitiative-list-item';
 import { BehaviorSubject } from 'rxjs';
 import { EffectListService } from './effect-list.service';
 import { EffectListItem } from '../models/effect-list-item';
+import { GMConfigService } from './gm-config.service';
 
 @Injectable()
 export class InitiativeListService {
@@ -14,7 +15,7 @@ export class InitiativeListService {
   private currentRoundSubject = new BehaviorSubject<number>(1);
   currentRound$ = this.currentRoundSubject.asObservable();
 
-  constructor(private effectListService: EffectListService) {}
+  constructor(private effectListService: EffectListService, private gmConfigService: GMConfigService) {}
 
   setup(): void {
     const renderList = (items: Array<any>) => {
@@ -48,7 +49,6 @@ export class InitiativeListService {
       OBR.action.setHeight(newHeight > minHeight ? newHeight : minHeight);
     };
     OBR.scene.items.onChange(renderList);
-    OBR.scene.items.getItems().then(renderList);
   }
 
   updateInitiative(id: string, initiative: number): void {
@@ -104,7 +104,8 @@ export class InitiativeListService {
             }
           }
         );
-      });
+      })
+      .catch(console.error);
 
     this.centerActiveItem();
   }
@@ -126,6 +127,10 @@ export class InitiativeListService {
   }
 
   private async centerActiveItem(): Promise<void> {
+    if (!this.gmConfigService.config.autoCenterActiveItem) {
+      return;
+    }
+
     const items = await OBR.scene.items.getItems((item) => item.metadata[`${ID}/metadata`] != null).catch(() => []);
     const activeItem = items.find((item) => (item.metadata[`${ID}/metadata`] as any).active);
 

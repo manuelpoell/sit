@@ -9,14 +9,17 @@ import { InitiativeListItemComponent } from './components/initiative-list-item.c
 import { Subscription } from 'rxjs';
 import { EffectListComponent } from './components/effect-list.component';
 import { slideInOutTrigger } from './animations/roll-up-down.animation';
+import { GMConfigService } from './services/gm-config.service';
+import { GMConfigComponent } from './components/gm-config.component';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, InitiativeListItemComponent, EffectListComponent],
+  imports: [CommonModule, InitiativeListItemComponent, EffectListComponent, GMConfigComponent],
   template: `
     <div class="app-container">
       <app-effect-list *ngIf="showEffectList" @slideInOut (onClose)="onEffectsButtonClick()"></app-effect-list>
+      <app-gm-config *ngIf="showGMConfig" @slideInOut (onClose)="onConfigButtonClick()"></app-gm-config>
       <div class="app-placeholder" [style.display]="initiativeItems.length > 0 ? 'none' : 'flex'">
         <span id="app-placeholder-text">Schmandi's<br />Initiative Tracker</span>
       </div>
@@ -24,6 +27,9 @@ import { slideInOutTrigger } from './animations/roll-up-down.animation';
         <div class="app-header">
           <span class="rounds-counter" (click)="onRoundCounterClick()">Round {{ roundCounter }}</span>
           <div class="action-buttons">
+            <span *ngIf="enableGMConfigButton" class="icon-button config-button" (click)="onConfigButtonClick()">
+              &#x2699;
+            </span>
             <span class="icon-button effects-button" (click)="onEffectsButtonClick()">&#x2630;</span>
             <span class="icon-button next-button" (click)="onNextButtonClick()">&#x25B6;</span>
           </div>
@@ -45,12 +51,15 @@ export class AppComponent implements OnInit, OnDestroy {
   initiativeItems: Array<InitiativeItem> = [];
   roundCounter: number = 1;
   showEffectList: boolean = false;
+  enableGMConfigButton: boolean = false;
+  showGMConfig: boolean = false;
   private subscription = new Subscription();
 
   constructor(
     private initiativeListService: InitiativeListService,
     private themeService: ThemeService,
     private contextMenuService: ContextMenuService,
+    private gmConfigService: GMConfigService,
     private cdRef: ChangeDetectorRef
   ) {}
 
@@ -58,11 +67,19 @@ export class AppComponent implements OnInit, OnDestroy {
     OBR.onReady(() => {
       this.contextMenuService.setup();
       this.initiativeListService.setup();
+      this.gmConfigService.setup();
       OBR.theme.getTheme().then(
         (theme) => this.themeService.setTheme(theme),
         (error) => console.error(error)
       );
       OBR.theme.onChange((theme) => this.themeService.setTheme(theme));
+      OBR.player
+        .getRole()
+        .then((role) => {
+          this.enableGMConfigButton = role === 'GM';
+          this.cdRef.detectChanges();
+        })
+        .catch(() => null);
     });
 
     // subscribe manually because async pipe does not work somehow
@@ -100,6 +117,11 @@ export class AppComponent implements OnInit, OnDestroy {
 
   onEffectsButtonClick(): void {
     this.showEffectList = !this.showEffectList;
+    this.cdRef.detectChanges();
+  }
+
+  onConfigButtonClick(): void {
+    this.showGMConfig = !this.showGMConfig;
     this.cdRef.detectChanges();
   }
 }
