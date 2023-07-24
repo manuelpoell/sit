@@ -38,6 +38,7 @@ import { GMConfigComponent } from './components/gm-config.component';
           <app-initiative-list-item
             [item]="item"
             (initiativeChange)="onInitiativeChange(item.id, $event)"
+            (displayNameClick)="onDisplayNameClick(item.id)"
           ></app-initiative-list-item>
         </ng-container>
       </ng-container>
@@ -102,6 +103,12 @@ export class AppComponent implements OnInit, OnDestroy {
 
   onInitiativeChange(id: string, initiative: number): void {
     this.initiativeListService.updateInitiative(id, initiative);
+  }
+
+  onDisplayNameClick(id: string): void {
+    const displayNameInput = window.prompt('Enter display name (Leave blank to reset):');
+    if (displayNameInput == null) return;
+    this.initiativeListService.updateDisplayName(id, displayNameInput);
   }
 
   onNextButtonClick(): void {

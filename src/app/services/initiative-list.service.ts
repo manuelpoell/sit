@@ -30,6 +30,7 @@ export class InitiativeListService {
             active: metadata.active,
             rounds: metadata.rounds || 1,
             effects: metadata.effects,
+            displayName: metadata.displayName,
           });
         }
       }
@@ -59,6 +60,19 @@ export class InitiativeListService {
         items[0].metadata[`${ID}/metadata`] = {
           ...metadata,
           initiative,
+        };
+      }
+    );
+  }
+
+  updateDisplayName(id: string, displayName: string): void {
+    OBR.scene.items.updateItems(
+      (item) => item.id === id,
+      (items) => {
+        const metadata: any = items[0].metadata[`${ID}/metadata`];
+        items[0].metadata[`${ID}/metadata`] = {
+          ...metadata,
+          displayName,
         };
       }
     );

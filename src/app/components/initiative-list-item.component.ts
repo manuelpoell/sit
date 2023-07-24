@@ -8,7 +8,7 @@ import { InitiativeItem } from 'src/app/models/intitiative-list-item';
   imports: [CommonModule],
   template: `
     <div class="list-item" [class.active]="item.active">
-      <span>{{ item.name }}</span>
+      <span (click)="onDisplayNameClick()">{{ item.displayName || item.name }}</span>
       <input type="number" [value]="item.initiative" (change)="updateInitiative($event)" />
     </div>
   `,
@@ -18,10 +18,15 @@ import { InitiativeItem } from 'src/app/models/intitiative-list-item';
 export class InitiativeListItemComponent {
   @Input() item!: InitiativeItem;
   @Output() initiativeChange = new EventEmitter<number>();
+  @Output() displayNameClick = new EventEmitter<void>();
 
   constructor() {}
 
   updateInitiative(e: any): void {
     this.initiativeChange.emit(e.target.valueAsNumber);
+  }
+
+  onDisplayNameClick(): void {
+    this.displayNameClick.emit();
   }
 }
