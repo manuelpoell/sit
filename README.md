@@ -1,6 +1,6 @@
 # Schmandi's Initiative Tracker
 
-A basic Initiative and Effects Tracker extension for [owlbear.app](https://www.owlbear.app/)
+A basic Initiative and Effects Tracker extension for [owlbear.rodeo](https://www.owlbear.rodeo/)
 
 ![initial_screen](screenshots/start.png)
 
@@ -21,7 +21,7 @@ Get notified when effects fade away!
 
 ## Install SIT
 
-- Go to your [owlbear.app profile](https://www.owlbear.app/profile) and scroll down to "Extensions".
+- Go to your [owlbear.rodeo profile](https://www.owlbear.rodeo/profile) and scroll down to "Extensions".
 - Click "Add Extension".
 - Copy and paste following install link:
   - https://sit.manuelpoell.at/assets/manifest.json
