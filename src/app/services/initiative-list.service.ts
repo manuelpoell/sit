@@ -78,10 +78,10 @@ export class InitiativeListService {
     );
   }
 
-  iterateNext(): void {
-    OBR.scene.items
+  async iterateNext(): Promise<void> {
+    await OBR.scene.items
       .getItems((item) => item.metadata[`${ID}/metadata`] != null)
-      .then((items) => {
+      .then(async (items) => {
         if (items.length === 0) return;
         const itemMeta = items
           .map((item) => item.metadata[`${ID}/metadata`] as any)
@@ -95,7 +95,7 @@ export class InitiativeListService {
           this.currentRoundSubject.next((items[0].metadata[`${ID}/metadata`] as any).rounds + 1);
         }
 
-        OBR.scene.items.updateItems(
+        await OBR.scene.items.updateItems(
           (item) => item.metadata[`${ID}/metadata`] != null,
           (items) => {
             for (const item of items) {
