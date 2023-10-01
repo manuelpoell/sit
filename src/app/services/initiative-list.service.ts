@@ -48,6 +48,7 @@ export class InitiativeListService {
       const newHeight = (sortedItems.length + 1) * 50 + 25;
       const minHeight = 225;
       OBR.action.setHeight(newHeight > minHeight ? newHeight : minHeight);
+      this.centerActiveItem();
     };
     OBR.scene.items.onChange(renderList);
   }
@@ -120,8 +121,6 @@ export class InitiativeListService {
         );
       })
       .catch(console.error);
-
-    this.centerActiveItem();
   }
 
   setRounds(rounds: number = 1): void {
