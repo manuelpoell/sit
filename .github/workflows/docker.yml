@@ -1,8 +1,6 @@
-name: Docker build and deploy image
+name: Docker Build
 on:
-  push:
-    branches:
-      - main
+  workflow_dispatch:
 jobs:
   push_to_registry:
     name: Push docker image to registry
