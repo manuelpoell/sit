@@ -81,6 +81,7 @@ export class AppComponent implements OnInit, OnDestroy {
           this.cdRef.detectChanges();
         })
         .catch(() => null);
+      OBR.action.setHeight(225);
     });
 
     // subscribe manually because async pipe does not work somehow
