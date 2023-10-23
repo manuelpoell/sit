@@ -20,6 +20,14 @@ import { GMConfig } from '../models/gm-config';
           (change)="autoCenterActiveItem = !autoCenterActiveItem"
         />
       </label>
+      <label class="checkbox-container">
+        Redact invisible tokens
+        <input
+          type="checkbox"
+          [checked]="redactInvisibleItems"
+          (change)="redactInvisibleItems = !redactInvisibleItems"
+        />
+      </label>
     </div>
   `,
   styleUrls: ['./gm-config.component.css'],
@@ -28,17 +36,20 @@ import { GMConfig } from '../models/gm-config';
 export class GMConfigComponent implements OnInit {
   @Output() onClose = new EventEmitter();
   autoCenterActiveItem: boolean = false;
+  redactInvisibleItems: boolean = false;
 
   constructor(private gmConfigService: GMConfigService) {}
 
   ngOnInit(): void {
     const config = this.gmConfigService.config;
     this.autoCenterActiveItem = config.autoCenterActiveItem;
+    this.redactInvisibleItems = config.redactInvisibleItems;
   }
 
   close(): void {
     const config: GMConfig = {
       autoCenterActiveItem: this.autoCenterActiveItem,
+      redactInvisibleItems: this.redactInvisibleItems,
     };
 
     this.gmConfigService.update(config);

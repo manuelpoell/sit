@@ -31,6 +31,7 @@ export class InitiativeListService {
             rounds: metadata.rounds || 1,
             effects: metadata.effects,
             displayName: metadata.displayName,
+            visible: item.visible,
           });
         }
       }

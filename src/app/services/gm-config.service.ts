@@ -7,6 +7,7 @@ import { ID } from '../utils/config';
 export class GMConfigService {
   private gmConfig: GMConfig = {
     autoCenterActiveItem: true,
+    redactInvisibleItems: false,
   };
 
   constructor() {}

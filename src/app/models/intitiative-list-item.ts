@@ -7,5 +7,6 @@ export interface InitiativeItem {
   active: boolean;
   rounds: number;
   effects: Array<EffectListItem>;
+  visible: boolean;
   displayName?: string;
 }
