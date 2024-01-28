@@ -1,11 +1,11 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import OBR from '@owlbear-rodeo/sdk';
-import { ID } from '../utils/config';
-import { InitiativeItem } from '../models/intitiative-list-item';
-import { BehaviorSubject } from 'rxjs';
-import { EffectListService } from './effect-list.service';
-import { EffectListItem } from '../models/effect-list-item';
-import { GMConfigService } from './gm-config.service';
+import {ID} from '../utils/config';
+import {InitiativeItem} from '../models/intitiative-list-item';
+import {BehaviorSubject} from 'rxjs';
+import {EffectListService} from './effect-list.service';
+import {EffectListItem} from '../models/effect-list-item';
+import {GMConfigService} from './gm-config.service';
 
 @Injectable()
 export class InitiativeListService {
@@ -15,7 +15,8 @@ export class InitiativeListService {
   private currentRoundSubject = new BehaviorSubject<number>(1);
   currentRound$ = this.currentRoundSubject.asObservable();
 
-  constructor(private effectListService: EffectListService, private gmConfigService: GMConfigService) {}
+  constructor(private effectListService: EffectListService, private gmConfigService: GMConfigService) {
+  }
 
   setup(): void {
     const renderList = (items: Array<any>) => {
@@ -49,7 +50,6 @@ export class InitiativeListService {
       const newHeight = (sortedItems.length + 1) * 50 + 25;
       const minHeight = 225;
       OBR.action.setHeight(newHeight > minHeight ? newHeight : minHeight);
-      this.centerActiveItem();
     };
     OBR.scene.items.onChange(renderList);
   }
@@ -121,7 +121,8 @@ export class InitiativeListService {
           }
         );
       })
-      .catch(console.error);
+      .catch(console.error)
+      .finally(() => this.centerActiveItem());
   }
 
   setRounds(rounds: number = 1): void {
@@ -157,8 +158,8 @@ export class InitiativeListService {
         center: activeItem.position,
         height,
         width,
-        max: { x: activeItem.position.x + width / 2, y: activeItem.position.y + height / 2 },
-        min: { x: activeItem.position.x - width / 2, y: activeItem.position.y - height / 2 },
+        max: {x: activeItem.position.x + width / 2, y: activeItem.position.y + height / 2},
+        min: {x: activeItem.position.x - width / 2, y: activeItem.position.y - height / 2},
       });
     }
   }
