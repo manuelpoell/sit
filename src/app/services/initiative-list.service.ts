@@ -1,22 +1,26 @@
-import {Injectable} from '@angular/core';
-import OBR from '@owlbear-rodeo/sdk';
-import {ID} from '../utils/config';
-import {InitiativeItem} from '../models/intitiative-list-item';
-import {BehaviorSubject} from 'rxjs';
-import {EffectListService} from './effect-list.service';
-import {EffectListItem} from '../models/effect-list-item';
-import {GMConfigService} from './gm-config.service';
+import { Injectable } from "@angular/core";
+import OBR from "@owlbear-rodeo/sdk";
+import { ID } from "../utils/config";
+import { InitiativeItem } from "../models/intitiative-list-item";
+import { BehaviorSubject } from "rxjs";
+import { EffectListService } from "./effect-list.service";
+import { EffectListItem } from "../models/effect-list-item";
+import { GMConfigService } from "./gm-config.service";
 
 @Injectable()
 export class InitiativeListService {
-  private initiativeItemsSubject = new BehaviorSubject<Array<InitiativeItem>>([]);
+  private initiativeItemsSubject = new BehaviorSubject<Array<InitiativeItem>>(
+    [],
+  );
   initiativeItems$ = this.initiativeItemsSubject.asObservable();
 
   private currentRoundSubject = new BehaviorSubject<number>(1);
   currentRound$ = this.currentRoundSubject.asObservable();
 
-  constructor(private effectListService: EffectListService, private gmConfigService: GMConfigService) {
-  }
+  constructor(
+    private effectListService: EffectListService,
+    private gmConfigService: GMConfigService,
+  ) {}
 
   setup(): void {
     const renderList = (items: Array<any>) => {
@@ -37,7 +41,9 @@ export class InitiativeListService {
         }
       }
 
-      const sortedItems = initiativeItems.sort((a, b) => b.initiative - a.initiative);
+      const sortedItems = initiativeItems.sort(
+        (a, b) => b.initiative - a.initiative,
+      );
       this.initiativeItemsSubject.next([...sortedItems]);
       this.currentRoundSubject.next(sortedItems[0]?.rounds || 1);
 
@@ -54,6 +60,17 @@ export class InitiativeListService {
     OBR.scene.items.onChange(renderList);
   }
 
+  reset(): void {
+    OBR.scene.items.updateItems(
+      (item) => item.metadata[`${ID}/metadata`] != null,
+      (items) => {
+        for (let item of items) {
+          delete item.metadata[`${ID}/metadata`];
+        }
+      },
+    );
+  }
+
   updateInitiative(id: string, initiative: number): void {
     OBR.scene.items.updateItems(
       (item) => item.id === id,
@@ -63,7 +80,7 @@ export class InitiativeListService {
           ...metadata,
           initiative,
         };
-      }
+      },
     );
   }
 
@@ -76,7 +93,7 @@ export class InitiativeListService {
           ...metadata,
           displayName,
         };
-      }
+      },
     );
   }
 
@@ -91,10 +108,15 @@ export class InitiativeListService {
 
         const activeIndex = itemMeta.findIndex((item) => item.active);
         const nextRound: boolean = activeIndex === itemMeta.length - 1;
-        const nextActiveID = nextRound || activeIndex < 0 ? itemMeta[0].id : itemMeta[activeIndex + 1].id;
+        const nextActiveID =
+          nextRound || activeIndex < 0
+            ? itemMeta[0].id
+            : itemMeta[activeIndex + 1].id;
 
         if (nextRound) {
-          this.currentRoundSubject.next((items[0].metadata[`${ID}/metadata`] as any).rounds + 1);
+          this.currentRoundSubject.next(
+            (items[0].metadata[`${ID}/metadata`] as any).rounds + 1,
+          );
         }
 
         await OBR.scene.items.updateItems(
@@ -118,7 +140,7 @@ export class InitiativeListService {
                 effects,
               };
             }
-          }
+          },
         );
       })
       .catch(console.error)
@@ -136,7 +158,7 @@ export class InitiativeListService {
             rounds,
           };
         }
-      }
+      },
     );
     this.currentRoundSubject.next(1);
   }
@@ -146,8 +168,12 @@ export class InitiativeListService {
       return;
     }
 
-    const items = await OBR.scene.items.getItems((item) => item.metadata[`${ID}/metadata`] != null).catch(() => []);
-    const activeItem = items.find((item) => (item.metadata[`${ID}/metadata`] as any).active);
+    const items = await OBR.scene.items
+      .getItems((item) => item.metadata[`${ID}/metadata`] != null)
+      .catch(() => []);
+    const activeItem = items.find(
+      (item) => (item.metadata[`${ID}/metadata`] as any).active,
+    );
 
     const scale = await OBR.viewport.getScale();
     const width = (await OBR.viewport.getWidth()) / scale;
@@ -158,8 +184,14 @@ export class InitiativeListService {
         center: activeItem.position,
         height,
         width,
-        max: {x: activeItem.position.x + width / 2, y: activeItem.position.y + height / 2},
-        min: {x: activeItem.position.x - width / 2, y: activeItem.position.y - height / 2},
+        max: {
+          x: activeItem.position.x + width / 2,
+          y: activeItem.position.y + height / 2,
+        },
+        min: {
+          x: activeItem.position.x - width / 2,
+          y: activeItem.position.y - height / 2,
+        },
       });
     }
   }

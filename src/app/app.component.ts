@@ -1,37 +1,80 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import OBR from '@owlbear-rodeo/sdk';
-import { ThemeService } from './services/theme.service';
-import { ContextMenuService } from './services/context-menu.service';
-import { InitiativeListService } from './services/initiative-list.service';
-import { InitiativeItem } from './models/intitiative-list-item';
-import { InitiativeListItemComponent } from './components/initiative-list-item.component';
-import { Subscription } from 'rxjs';
-import { EffectListComponent } from './components/effect-list.component';
-import { slideInOutTrigger } from './animations/roll-up-down.animation';
-import { GMConfigService } from './services/gm-config.service';
-import { GMConfigComponent } from './components/gm-config.component';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  OnDestroy,
+  OnInit,
+} from "@angular/core";
+import { CommonModule } from "@angular/common";
+import OBR from "@owlbear-rodeo/sdk";
+import { ThemeService } from "./services/theme.service";
+import { ContextMenuService } from "./services/context-menu.service";
+import { InitiativeListService } from "./services/initiative-list.service";
+import { InitiativeItem } from "./models/intitiative-list-item";
+import { InitiativeListItemComponent } from "./components/initiative-list-item.component";
+import { Subscription } from "rxjs";
+import { EffectListComponent } from "./components/effect-list.component";
+import { slideInOutTrigger } from "./animations/roll-up-down.animation";
+import { GMConfigService } from "./services/gm-config.service";
+import { GMConfigComponent } from "./components/gm-config.component";
 
 @Component({
-  selector: 'app-root',
+  selector: "app-root",
   standalone: true,
-  imports: [CommonModule, InitiativeListItemComponent, EffectListComponent, GMConfigComponent],
+  imports: [
+    CommonModule,
+    InitiativeListItemComponent,
+    EffectListComponent,
+    GMConfigComponent,
+  ],
   template: `
     <div class="app-container">
-      <app-effect-list *ngIf="showEffectList" @slideInOut (onClose)="onEffectsButtonClick()"></app-effect-list>
-      <app-gm-config *ngIf="showGMConfig" @slideInOut (onClose)="onConfigButtonClick()"></app-gm-config>
-      <div class="app-placeholder" [style.display]="initiativeItems.length > 0 ? 'none' : 'flex'">
-        <span id="app-placeholder-text">Schmandi's<br />Initiative Tracker</span>
+      <app-effect-list
+        *ngIf="showEffectList"
+        @slideInOut
+        (onClose)="onEffectsButtonClick()"
+      ></app-effect-list>
+      <app-gm-config
+        *ngIf="showGMConfig"
+        @slideInOut
+        (onClose)="onConfigButtonClick()"
+      ></app-gm-config>
+      <div
+        class="app-placeholder"
+        [style.display]="initiativeItems.length > 0 ? 'none' : 'flex'"
+      >
+        <span id="app-placeholder-text"
+          >Schmandi's<br />Initiative Tracker</span
+        >
       </div>
       <ng-container *ngIf="initiativeItems.length > 0">
         <div class="app-header">
-          <span class="rounds-counter" (click)="onRoundCounterClick()">Round {{ roundCounter }}</span>
+          <span class="rounds-counter" (click)="onRoundCounterClick()"
+            >Round {{ roundCounter }}</span
+          >
           <div class="action-buttons">
-            <span *ngIf="enableGMConfigButton" class="icon-button config-button" (click)="onConfigButtonClick()">
+            <span
+              *ngIf="enableGMConfigButton"
+              class="icon-button clear-button"
+              (click)="onClearButtonClick()"
+            >
+              &#x26CC;
+            </span>
+            <span
+              *ngIf="enableGMConfigButton"
+              class="icon-button config-button"
+              (click)="onConfigButtonClick()"
+            >
               &#x2699;
             </span>
-            <span class="icon-button effects-button" (click)="onEffectsButtonClick()">&#x2630;</span>
-            <span class="icon-button next-button" (click)="onNextButtonClick()">&#x25B6;</span>
+            <span
+              class="icon-button effects-button"
+              (click)="onEffectsButtonClick()"
+              >&#x2630;</span
+            >
+            <span class="icon-button next-button" (click)="onNextButtonClick()"
+              >&#x25B6;</span
+            >
           </div>
         </div>
         <ng-container *ngFor="let item of initiativeItems">
@@ -44,7 +87,7 @@ import { GMConfigComponent } from './components/gm-config.component';
       </ng-container>
     </div>
   `,
-  styleUrls: ['./app.component.css'],
+  styleUrls: ["./app.component.css"],
   changeDetection: ChangeDetectionStrategy.OnPush,
   animations: [slideInOutTrigger],
 })
@@ -61,7 +104,7 @@ export class AppComponent implements OnInit, OnDestroy {
     private themeService: ThemeService,
     private contextMenuService: ContextMenuService,
     private gmConfigService: GMConfigService,
-    private cdRef: ChangeDetectorRef
+    private cdRef: ChangeDetectorRef,
   ) {}
 
   ngOnInit(): void {
@@ -71,13 +114,13 @@ export class AppComponent implements OnInit, OnDestroy {
       this.gmConfigService.setup();
       OBR.theme.getTheme().then(
         (theme) => this.themeService.setTheme(theme),
-        (error) => console.error(error)
+        (error) => console.error(error),
       );
       OBR.theme.onChange((theme) => this.themeService.setTheme(theme));
       OBR.player
         .getRole()
         .then((role) => {
-          this.enableGMConfigButton = role === 'GM';
+          this.enableGMConfigButton = role === "GM";
           this.cdRef.detectChanges();
         })
         .catch(() => null);
@@ -107,7 +150,9 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   onDisplayNameClick(id: string): void {
-    const displayNameInput = window.prompt('Enter display name (Leave blank to reset):');
+    const displayNameInput = window.prompt(
+      "Enter display name (Leave blank to reset):",
+    );
     if (displayNameInput == null) return;
     this.initiativeListService.updateDisplayName(id, displayNameInput);
   }
@@ -117,15 +162,25 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   onRoundCounterClick(): void {
-    const roundsInput = window.prompt('Enter current round:');
+    const roundsInput = window.prompt("Enter current round:");
     if (roundsInput && parseInt(roundsInput)) {
-      this.initiativeListService.setRounds(parseInt(roundsInput) > 0 ? parseInt(roundsInput) : 0);
+      this.initiativeListService.setRounds(
+        parseInt(roundsInput) > 0 ? parseInt(roundsInput) : 0,
+      );
     }
   }
 
   onEffectsButtonClick(): void {
     this.showEffectList = !this.showEffectList;
     this.cdRef.detectChanges();
+  }
+
+  onClearButtonClick(): void {
+    const confirmation = window.confirm(
+      "Are you sure you want to reset the initiative tracking?",
+    );
+    if (!confirmation) return;
+    this.initiativeListService.reset();
   }
 
   onConfigButtonClick(): void {

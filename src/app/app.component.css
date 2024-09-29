@@ -36,6 +36,11 @@
   gap: 24px;
 }
 
+.clear-button {
+  font-size: 20px;
+  margin-top: 2px;
+}
+
 .effects-button {
   font-size: 24px;
   margin-top: -4px;
