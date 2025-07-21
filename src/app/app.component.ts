@@ -17,6 +17,8 @@ import { EffectListComponent } from "./components/effect-list.component";
 import { slideInOutTrigger } from "./animations/roll-up-down.animation";
 import { GMConfigService } from "./services/gm-config.service";
 import { GMConfigComponent } from "./components/gm-config.component";
+import { GroupedItemService } from "./services/grouped-item.service";
+import { EffectListService } from "./services/effect-list.service";
 
 @Component({
   selector: "app-root",
@@ -104,7 +106,9 @@ export class AppComponent implements OnInit, OnDestroy {
     private themeService: ThemeService,
     private contextMenuService: ContextMenuService,
     private gmConfigService: GMConfigService,
-    private cdRef: ChangeDetectorRef,
+    private groupedItemService: GroupedItemService,
+    private effectListService: EffectListService,
+    private cdRef: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
@@ -112,9 +116,14 @@ export class AppComponent implements OnInit, OnDestroy {
       this.contextMenuService.setup();
       this.initiativeListService.setup();
       this.gmConfigService.setup();
+
+      // Setup metadata listeners after OBR is ready
+      this.groupedItemService.setupMetadataListener();
+      this.effectListService.setupPlayerRoleListener();
+
       OBR.theme.getTheme().then(
         (theme) => this.themeService.setTheme(theme),
-        (error) => console.error(error),
+        (error) => console.error(error)
       );
       OBR.theme.onChange((theme) => this.themeService.setTheme(theme));
       OBR.player
@@ -151,7 +160,7 @@ export class AppComponent implements OnInit, OnDestroy {
 
   onDisplayNameClick(id: string): void {
     const displayNameInput = window.prompt(
-      "Enter display name (Leave blank to reset):",
+      "Enter display name (Leave blank to reset):"
     );
     if (displayNameInput == null) return;
     this.initiativeListService.updateDisplayName(id, displayNameInput);
@@ -165,7 +174,7 @@ export class AppComponent implements OnInit, OnDestroy {
     const roundsInput = window.prompt("Enter current round:");
     if (roundsInput && parseInt(roundsInput)) {
       this.initiativeListService.setRounds(
-        parseInt(roundsInput) > 0 ? parseInt(roundsInput) : 0,
+        parseInt(roundsInput) > 0 ? parseInt(roundsInput) : 0
       );
     }
   }
@@ -177,7 +186,7 @@ export class AppComponent implements OnInit, OnDestroy {
 
   onClearButtonClick(): void {
     const confirmation = window.confirm(
-      "Are you sure you want to reset the initiative tracking?",
+      "Are you sure you want to reset the initiative tracking?"
     );
     if (!confirmation) return;
     this.initiativeListService.reset();

@@ -1,7 +1,7 @@
-import { Injectable } from '@angular/core';
-import OBR from '@owlbear-rodeo/sdk';
-import { GMConfig } from '../models/gm-config';
-import { ID } from '../utils/config';
+import { Injectable } from "@angular/core";
+import OBR from "@owlbear-rodeo/sdk";
+import { GMConfig } from "../models/gm-config";
+import { ID } from "../utils/config";
 
 @Injectable()
 export class GMConfigService {
@@ -9,6 +9,9 @@ export class GMConfigService {
     autoCenterActiveItem: true,
     redactInvisibleItems: false,
   };
+
+  // Add caching
+  private cachedRoomMetadata: any = null;
 
   constructor() {}
 
@@ -19,6 +22,7 @@ export class GMConfigService {
   setup(): void {
     OBR.room.getMetadata().then(
       (roomMeta) => {
+        this.cachedRoomMetadata = roomMeta;
         const metadata = roomMeta[`${ID}/metadata`];
         if ((metadata as any)?.config) {
           this.gmConfig = {
@@ -31,6 +35,7 @@ export class GMConfigService {
     );
 
     const onMetaChange = (roomMeta: any) => {
+      this.cachedRoomMetadata = roomMeta;
       const metadata = roomMeta[`${ID}/metadata`];
       if (!metadata) {
         return;
@@ -47,6 +52,12 @@ export class GMConfigService {
   update(config: Partial<GMConfig>): void {
     const metadata: any = {};
     metadata[`${ID}/metadata`] = { config: { ...this.gmConfig, ...config } };
+
+    // Update cached metadata
+    this.cachedRoomMetadata = {
+      ...this.cachedRoomMetadata,
+      ...metadata,
+    };
 
     OBR.room.setMetadata(metadata);
   }

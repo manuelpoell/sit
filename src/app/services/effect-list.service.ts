@@ -14,12 +14,27 @@ export class EffectListService {
 
   buildingProccessBar: Boolean = false;
 
+  // Add caching
+  private cachedPlayerRole: string | null = null;
+  private cachedGridDpi: number | null = null;
+
+  setupPlayerRoleListener(): void {
+    // Set up player role change listener (though rare, it can happen)
+    OBR.player.onChange((player) => {
+      this.cachedPlayerRole = player.role;
+    });
+  }
+
   setEffectList(list: Array<EffectListItem>): void {
     this.effectList$.pipe(first()).subscribe(async (currentList) => {
+      // Cache player role
+      if (!this.cachedPlayerRole) {
+        this.cachedPlayerRole = await OBR.player.getRole();
+      }
+      const isGM = this.cachedPlayerRole === "GM";
+      
       for(let effect of currentList) {
         //console.log('EffectListService.setEffectList', effect);
-
-        const isGM = (await OBR.player.getRole()) === 'GM';
 
         if(!effect.processBar && !this.buildingProccessBar && isGM) {
           this.buildingProccessBar = true;
@@ -170,7 +185,11 @@ export class EffectListService {
 
     if(!character || character.length === 0) return;
 
-    const gridDpi = await OBR.scene.grid.getDpi();
+    // Use cached grid DPI with null safety
+    if (!this.cachedGridDpi) {
+      this.cachedGridDpi = await OBR.scene.grid.getDpi();
+    }
+    const gridDpi = this.cachedGridDpi || 1; // Fallback to 1 if still null
 
     await OBR.scene.items.updateItems(
       (item) => item.id === effect.processBar?.path,
@@ -221,9 +240,11 @@ export class EffectListService {
 
     const character = (await OBR.scene.items.getItems([item.characterId]))[0];
 
-    //console.log('EffectListService.buildProccessBar', item, character);
-
-    const gridDpi = await OBR.scene.grid?.getDpi()
+    // Use cached grid DPI with null safety
+    if (!this.cachedGridDpi) {
+      this.cachedGridDpi = await OBR.scene.grid.getDpi();
+    }
+    const gridDpi = this.cachedGridDpi || 1; // Fallback to 1 if still null
 
     const path = buildPath()
       .commands(
